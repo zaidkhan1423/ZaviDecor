@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Zavi Decor</string>
+    <string name="home">Home</string>
+    <string name="notifications">Notifications</string>
+    <string name="my_profile">My profile</string>
+    <string name="not_connected">No internet connection!</string>
+</resources>
