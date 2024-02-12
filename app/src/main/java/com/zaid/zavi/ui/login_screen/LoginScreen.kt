@@ -49,8 +49,7 @@ fun LoginScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
+            .background(color = MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
@@ -63,10 +62,10 @@ fun LoginScreen() {
             Text(
                 text = "Login",
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                fontWeight = FontWeight.W500
+                fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                fontWeight = FontWeight.W600
             )
-            Spacer(modifier = Modifier.size(20.dp))
+            Spacer(modifier = Modifier.size(18.dp))
             Text(
                 text = "Welcome Back",
                 color = MaterialTheme.colorScheme.onBackground,
@@ -137,7 +136,7 @@ fun LoginScreen() {
             Box(
                 modifier = Modifier
                     .widthIn(500.dp)
-                    .padding(start = 30.dp)
+                    .padding(horizontal = 30.dp)
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.TopStart),
@@ -166,6 +165,8 @@ fun LoginScreen() {
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                 fontWeight = FontWeight.W700
             )
+
+            Spacer(modifier = Modifier.size(30.dp))
 
         }
     }
