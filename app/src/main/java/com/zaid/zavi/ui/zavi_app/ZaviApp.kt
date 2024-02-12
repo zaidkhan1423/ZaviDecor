@@ -51,7 +51,6 @@ fun ZaviApp(
         }
     }
 
-
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         bottomBar = {
