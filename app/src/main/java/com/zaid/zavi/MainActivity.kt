@@ -3,8 +3,8 @@ package com.zaid.zavi
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.zaid.zavi.ui.theme.ZaviDecorTheme
-import com.zaid.zavi.ui.zavi_app.ZaviApp
+import com.zaid.zavi.theme.ZaviDecorTheme
+import com.zaid.zavi.ui.login_screen.LoginScreen
 import com.zaid.zavi.utils.NetworkMonitor
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -18,10 +18,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ZaviDecorTheme {
+            ZaviDecorTheme() {
                 // A surface container using the 'background' color from the theme
-                ZaviApp(networkMonitor = networkMonitor)
+//                ZaviApp(networkMonitor = networkMonitor)
+                LoginScreen()
+
             }
+
         }
     }
 }
