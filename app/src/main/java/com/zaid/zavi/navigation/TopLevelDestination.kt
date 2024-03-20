@@ -15,13 +15,13 @@ enum class TopLevelDestination(
         route = Screen.HomeScreen.route
     ),
     SEARCH(
-        selectedIcon = Icon.DrawableResourceIcon(AppIcons.HomeSelected),
-        unselectedIcon = Icon.DrawableResourceIcon(AppIcons.HomeUnselected),
+        selectedIcon = Icon.DrawableResourceIcon(AppIcons.SearchSelected),
+        unselectedIcon = Icon.DrawableResourceIcon(AppIcons.SearchUnselected),
         route = Screen.SearchScreen.route
     ),
     MY_CART(
-        selectedIcon = Icon.DrawableResourceIcon(AppIcons.HomeSelected),
-        unselectedIcon = Icon.DrawableResourceIcon(AppIcons.HomeUnselected),
+        selectedIcon = Icon.DrawableResourceIcon(AppIcons.CartSelected),
+        unselectedIcon = Icon.DrawableResourceIcon(AppIcons.CartUnselected),
         route = Screen.MyCartScreen.route
     ),
     PROFILE(

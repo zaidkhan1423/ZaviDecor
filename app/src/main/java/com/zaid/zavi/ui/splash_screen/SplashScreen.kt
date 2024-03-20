@@ -18,6 +18,9 @@ import com.zaid.zavi.R
 
 @Composable
 fun SplashScreen() {
+
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()

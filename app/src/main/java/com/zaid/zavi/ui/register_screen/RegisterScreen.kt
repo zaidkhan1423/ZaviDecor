@@ -1,9 +1,11 @@
 package com.zaid.zavi.ui.register_screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -28,16 +30,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.zaid.zavi.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen() {
+fun RegisterScreen(navController: NavController) {
 
     var userEmail by remember {
         mutableStateOf("")
@@ -255,17 +260,27 @@ fun RegisterScreen() {
                 ) {
                     Text(text = "Sign Up", fontSize = MaterialTheme.typography.bodyLarge.fontSize)
                 }
-
             }
 
             Spacer(modifier = Modifier.size(50.dp))
 
-            Text(
-                text = "Already have an account? Log In",
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                fontWeight = FontWeight.W700
-            )
+           Row {
+               Text(
+                   text = "Already have an account? ",
+                   color = MaterialTheme.colorScheme.onBackground,
+                   fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                   fontWeight = FontWeight.W700
+               )
+               Text(
+                   text = "Log In",
+                   color = MaterialTheme.colorScheme.primary,
+                   fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                   fontWeight = FontWeight.W700,
+                   modifier = Modifier.clickable {
+                       navController.navigate(Screen.LoginScreen.route)
+                   }
+               )
+           }
 
             Spacer(modifier = Modifier.size(30.dp))
 
@@ -276,5 +291,5 @@ fun RegisterScreen() {
 @Preview(showBackground = true)
 @Composable
 fun RegisterScreenPreview() {
-    RegisterScreen()
+    RegisterScreen(navController = NavController(LocalContext.current))
 }

@@ -77,6 +77,9 @@ dependencies {
     //Lifecycle aware compose state
     implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
 
+    //Coil
+    implementation ("io.coil-kt:coil-compose:2.4.0")
+    
     //Hilt
     val hiltVersion = "2.47"
     implementation ("com.google.dagger:hilt-android:2.47")

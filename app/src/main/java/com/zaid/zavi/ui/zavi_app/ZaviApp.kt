@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -101,7 +100,7 @@ private fun ZaviBottomBar(
                         destination.unselectedIcon
                     }
                     when (icon) {
-                        is Icon.ImageVectorIcon -> Icon(
+                        is Icon.ImageVectorIcon -> Image(
                             imageVector = icon.imageVector,
                             contentDescription = null,
                         )
@@ -115,5 +114,4 @@ private fun ZaviBottomBar(
             )
         }
     }
-
 }

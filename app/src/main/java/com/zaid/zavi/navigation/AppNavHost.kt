@@ -13,7 +13,7 @@ fun AppNavHost(
     navHostController: NavHostController
 ) {
     NavHost(navController = navHostController, startDestination = NavGraphRoutes.TOP_LEVEL) {
-        authGraph()
+        authGraph(navController = navHostController)
         topLevelGraph(navController = navHostController)
     }
 }
