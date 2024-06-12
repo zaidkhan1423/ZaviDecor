@@ -22,7 +22,7 @@ class LoginScreenViewModel @Inject constructor(
     fun loginUser(email: String, password: String) {
         _loginScreenUiState.update { uiState ->
             uiState.copy(
-                loading = true, snackBarMessage = null
+                loginLoading = true, snackBarMessage = null
             )
         }
         viewModelScope.launch {
@@ -30,7 +30,7 @@ class LoginScreenViewModel @Inject constructor(
                 is Resource.Failure -> {
                     _loginScreenUiState.update { uiState ->
                         uiState.copy(
-                            loading = false, snackBarMessage = result.exception.message
+                            loginLoading = false, snackBarMessage = result.exception.message
                         )
                     }
                 }
@@ -38,7 +38,7 @@ class LoginScreenViewModel @Inject constructor(
                 Resource.Loading -> {
                     _loginScreenUiState.update { uiState ->
                         uiState.copy(
-                            loading = true, snackBarMessage = null
+                            loginLoading = true, snackBarMessage = null
                         )
                     }
                 }
@@ -46,7 +46,7 @@ class LoginScreenViewModel @Inject constructor(
                 is Resource.Success -> {
                     _loginScreenUiState.update { uiState ->
                         uiState.copy(
-                            loading = false, snackBarMessage = null, shouldNavigate = true
+                            loginLoading = false, snackBarMessage = null, shouldNavigate = true
                         )
                     }
                 }
@@ -57,7 +57,7 @@ class LoginScreenViewModel @Inject constructor(
     fun resetPassword(email: String) {
         _loginScreenUiState.update { uiState ->
             uiState.copy(
-                loading = true, snackBarMessage = null, shouldNavigate = false
+                resetPasswordLoading = true, snackBarMessage = null, shouldNavigate = false,  shouldHideResetPasswordDialog = false
             )
         }
         viewModelScope.launch {
@@ -65,9 +65,9 @@ class LoginScreenViewModel @Inject constructor(
                 is Resource.Failure -> {
                     _loginScreenUiState.update { uiState ->
                         uiState.copy(
-                            loading = false,
+                            resetPasswordLoading = false,
                             snackBarMessage = result.exception.message,
-                            shouldNavigate = false
+                            shouldHideResetPasswordDialog = true
                         )
                     }
                 }
@@ -75,7 +75,7 @@ class LoginScreenViewModel @Inject constructor(
                 Resource.Loading -> {
                     _loginScreenUiState.update { uiState ->
                         uiState.copy(
-                            loading = true, snackBarMessage = null, shouldNavigate = false
+                            resetPasswordLoading = true, snackBarMessage = null
                         )
                     }
                 }
@@ -83,9 +83,9 @@ class LoginScreenViewModel @Inject constructor(
                 is Resource.Success -> {
                     _loginScreenUiState.update { uiState ->
                         uiState.copy(
-                            loading = false,
+                            resetPasswordLoading = false,
                             snackBarMessage = "Password reset link sent successfully",
-                            shouldNavigate = false
+                            shouldHideResetPasswordDialog = true
                         )
                     }
                 }
