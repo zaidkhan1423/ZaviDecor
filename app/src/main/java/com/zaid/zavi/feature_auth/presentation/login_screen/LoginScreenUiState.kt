@@ -5,5 +5,11 @@ data class LoginScreenUiState(
     val shouldNavigate: Boolean = false,
     val snackBarMessage: String? = null,
     val resetPasswordLoading: Boolean = false,
-    val shouldHideResetPasswordDialog: Boolean = false
+    val shouldShowResetPasswordDialog: Boolean = false,
+    val isEmailEmpty: Boolean = false,
+    val isPasswordEmpty: Boolean = false,
+    val email: String = "",
+    val password: String = "",
+    val emailForResetPassword: String = "",
+    val isEmailForResetPasswordEmpty: Boolean = false
 )

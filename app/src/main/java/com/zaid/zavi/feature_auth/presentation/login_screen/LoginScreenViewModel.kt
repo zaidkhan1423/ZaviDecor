@@ -19,7 +19,74 @@ class LoginScreenViewModel @Inject constructor(
     private val _loginScreenUiState = MutableStateFlow(LoginScreenUiState())
     val loginScreenUiState = _loginScreenUiState.asStateFlow()
 
-    fun loginUser(email: String, password: String) {
+    fun onEvent(event: LoginUiEvent) {
+        when (event) {
+            is LoginUiEvent.OnEmailChange -> _loginScreenUiState.update {
+                it.copy(
+                    email = event.email
+                )
+            }
+
+            is LoginUiEvent.OnPasswordChange -> _loginScreenUiState.update {
+                it.copy(
+                    password = event.password
+                )
+            }
+
+            LoginUiEvent.OnLoginClick -> loginUser()
+
+            LoginUiEvent.OnMessageDisplayed -> _loginScreenUiState.update {
+                it.copy(
+                    snackBarMessage = null
+                )
+            }
+
+            is LoginUiEvent.EmailEmptyStateChanged -> _loginScreenUiState.update {
+                it.copy(
+                    isEmailEmpty = event.isEmailEmpty
+                )
+            }
+
+            is LoginUiEvent.PasswordEmptyStateChanged -> _loginScreenUiState.update {
+                it.copy(
+                    isPasswordEmpty = event.isPasswordEmpty
+                )
+            }
+
+            is LoginUiEvent.EmailForResetPasswordStateChange -> _loginScreenUiState.update {
+                it.copy(
+                    isEmailForResetPasswordEmpty = event.isEmailForResetPasswordEmpty
+                )
+            }
+
+            is LoginUiEvent.OnEmailForResetPasswordChange -> _loginScreenUiState.update {
+                it.copy(
+                    emailForResetPassword = event.emailForResetPassword
+                )
+            }
+
+            LoginUiEvent.OnResetPasswordClick -> resetPassword()
+            is LoginUiEvent.OnResetPasswordDialogStateChanged -> _loginScreenUiState.update {
+                it.copy(
+                    shouldShowResetPasswordDialog = event.shouldShowResetPasswordDialog
+                )
+            }
+        }
+    }
+
+    private fun loginUser() {
+        val email = loginScreenUiState.value.email
+        val password = loginScreenUiState.value.password
+
+        _loginScreenUiState.update {
+            it.copy(
+                isEmailEmpty = email.isBlank(),
+                isPasswordEmpty = password.isBlank()
+            )
+        }
+
+        if (loginScreenUiState.value.isEmailEmpty || loginScreenUiState.value.isPasswordEmpty) return
+
         _loginScreenUiState.update { uiState ->
             uiState.copy(
                 loginLoading = true, snackBarMessage = null
@@ -54,12 +121,26 @@ class LoginScreenViewModel @Inject constructor(
         }
     }
 
-    fun resetPassword(email: String) {
-        _loginScreenUiState.update { uiState ->
-            uiState.copy(
-                resetPasswordLoading = true, snackBarMessage = null, shouldNavigate = false,  shouldHideResetPasswordDialog = false
+    private fun resetPassword() {
+
+        val email = loginScreenUiState.value.emailForResetPassword
+
+        _loginScreenUiState.update {
+            it.copy(
+                isEmailForResetPasswordEmpty = email.isBlank()
             )
         }
+
+        if (loginScreenUiState.value.isEmailForResetPasswordEmpty) return
+
+        _loginScreenUiState.update { uiState ->
+            uiState.copy(
+                resetPasswordLoading = true,
+                snackBarMessage = null,
+                shouldNavigate = false
+            )
+        }
+
         viewModelScope.launch {
             when (val result = authRepository.resetPassword(email)) {
                 is Resource.Failure -> {
@@ -67,30 +148,27 @@ class LoginScreenViewModel @Inject constructor(
                         uiState.copy(
                             resetPasswordLoading = false,
                             snackBarMessage = result.exception.message,
-                            shouldHideResetPasswordDialog = true
+                            shouldShowResetPasswordDialog = false
                         )
                     }
                 }
-
                 Resource.Loading -> {
                     _loginScreenUiState.update { uiState ->
                         uiState.copy(
-                            resetPasswordLoading = true, snackBarMessage = null
+                            resetPasswordLoading = true, snackBarMessage = null, shouldShowResetPasswordDialog = true
                         )
                     }
                 }
-
                 is Resource.Success -> {
                     _loginScreenUiState.update { uiState ->
                         uiState.copy(
                             resetPasswordLoading = false,
                             snackBarMessage = "Password reset link sent successfully",
-                            shouldHideResetPasswordDialog = true
+                            shouldShowResetPasswordDialog = false
                         )
                     }
                 }
             }
         }
     }
-
 }

@@ -32,7 +32,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -54,21 +53,20 @@ import androidx.navigation.NavController
 import com.zaid.zavi.core.navigation.NavGraphRoutes
 import com.zaid.zavi.core.navigation.Screen
 import com.zaid.zavi.core.utils.AppIcons
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     navController: NavController,
     uiState: LoginScreenUiState,
-    loginUser: (String, String) -> Unit,
-    resetPassword: (String) -> Unit,
+    onEvent: (LoginUiEvent) -> Unit,
     onShowSnackBar: suspend (message: String, actionLabel: String?, duration: SnackbarDuration) -> Boolean
 ) {
 
     LaunchedEffect(uiState) {
         if (uiState.snackBarMessage != null) {
             onShowSnackBar(uiState.snackBarMessage, null, SnackbarDuration.Short)
+            onEvent(LoginUiEvent.OnMessageDisplayed)
         }
 
         if (uiState.shouldNavigate) {
@@ -80,21 +78,8 @@ fun LoginScreen(
         }
     }
 
-    var userEmail by rememberSaveable { mutableStateOf("") }
-    var isEmailEmpty by rememberSaveable { mutableStateOf(false) }
-
-    var userPassword by rememberSaveable { mutableStateOf("") }
     var showPassword by rememberSaveable { mutableStateOf(false) }
-    var isPasswordEmpty by rememberSaveable { mutableStateOf(false) }
 
-    var showResetPasswordDialog by rememberSaveable { mutableStateOf(false) }
-
-    LaunchedEffect(uiState) {
-        if (uiState.shouldHideResetPasswordDialog) {
-            delay(1000L)
-            showResetPasswordDialog = false
-        }
-    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -125,10 +110,10 @@ fun LoginScreen(
             Spacer(modifier = Modifier.size(20.dp))
 
             OutlinedTextField(
-                value = userEmail,
+                value = uiState.email,
                 onValueChange = {
-                    userEmail = it
-                    isEmailEmpty = false
+                    onEvent(LoginUiEvent.OnEmailChange(it))
+                    onEvent(LoginUiEvent.EmailEmptyStateChanged(isEmailEmpty = false))
                 },
                 singleLine = true,
                 textStyle = TextStyle(
@@ -161,7 +146,7 @@ fun LoginScreen(
                     .padding(horizontal = 30.dp)
                     .height(21.dp)
             ) {
-                if (isEmailEmpty) {
+                if (uiState.isEmailEmpty) {
                     Text(
                         text = "Email cannot be empty",
                         color = MaterialTheme.colorScheme.error,
@@ -174,10 +159,10 @@ fun LoginScreen(
             Spacer(modifier = Modifier.size(14.dp))
 
             OutlinedTextField(
-                value = userPassword,
+                value = uiState.password,
                 onValueChange = {
-                    userPassword = it
-                    isPasswordEmpty = false
+                    onEvent(LoginUiEvent.OnPasswordChange(it))
+                    onEvent(LoginUiEvent.PasswordEmptyStateChanged(isPasswordEmpty = false))
                 },
                 singleLine = true,
                 textStyle = TextStyle(
@@ -219,7 +204,7 @@ fun LoginScreen(
                     .padding(horizontal = 30.dp)
                     .height(21.dp)
             ) {
-                if (isPasswordEmpty) {
+                if (uiState.isPasswordEmpty) {
                     Text(
                         text = "Password cannot be empty",
                         color = MaterialTheme.colorScheme.error,
@@ -239,9 +224,7 @@ fun LoginScreen(
                 Text(
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .clickable {
-                            showResetPasswordDialog = true
-                        },
+                        .clickable { onEvent(LoginUiEvent.OnResetPasswordDialogStateChanged(true)) },
                     text = "Forgot Password?",
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize
@@ -251,24 +234,7 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-                    when {
-                        userEmail.isEmpty() && userPassword.isEmpty() -> {
-                            isEmailEmpty = true
-                            isPasswordEmpty = true
-                        }
-
-                        userEmail.isEmpty() -> {
-                            isEmailEmpty = true
-                        }
-
-                        userPassword.isEmpty() -> {
-                            isPasswordEmpty = true
-                        }
-
-                        else -> {
-                            loginUser(userEmail, userPassword)
-                        }
-                    }
+                    onEvent(LoginUiEvent.OnLoginClick)
                 },
                 modifier = Modifier
                     .widthIn(500.dp)
@@ -287,6 +253,7 @@ fun LoginScreen(
             }
 
             Spacer(modifier = Modifier.size(80.dp))
+
             Row {
                 Text(
                     text = "New User ",
@@ -307,12 +274,9 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.size(30.dp))
 
-            var userEmailForReset by remember { mutableStateOf("") }
-            var isEmailEmptyForReset by remember { mutableStateOf(false) }
-
-            if (showResetPasswordDialog) {
+            if (uiState.shouldShowResetPasswordDialog) {
                 Dialog(onDismissRequest = {
-                    showResetPasswordDialog = false
+                    onEvent(LoginUiEvent.OnResetPasswordDialogStateChanged(false))
                 }) {
                     Surface(
                         shape = RoundedCornerShape(16.dp),
@@ -341,10 +305,10 @@ fun LoginScreen(
                             Spacer(modifier = Modifier.height(15.dp))
 
                             OutlinedTextField(
-                                value = userEmailForReset,
+                                value = uiState.emailForResetPassword,
                                 onValueChange = {
-                                    userEmailForReset = it
-                                    isEmailEmptyForReset = false
+                                    onEvent(LoginUiEvent.OnEmailForResetPasswordChange(it))
+                                    onEvent(LoginUiEvent.EmailForResetPasswordStateChange(false))
                                 },
                                 singleLine = true,
                                 textStyle = TextStyle(
@@ -375,7 +339,7 @@ fun LoginScreen(
                                 modifier = Modifier
                                     .height(21.dp)
                             ) {
-                                if (isEmailEmptyForReset) {
+                                if (uiState.isEmailForResetPasswordEmpty) {
                                     Text(
                                         text = "Email cannot be empty",
                                         color = MaterialTheme.colorScheme.error,
@@ -389,11 +353,7 @@ fun LoginScreen(
 
                             Button(
                                 onClick = {
-                                    if (userEmailForReset.isEmpty()) {
-                                        isEmailEmptyForReset = true
-                                    } else {
-                                        resetPassword(userEmailForReset)
-                                    }
+                                    onEvent(LoginUiEvent.OnResetPasswordClick)
                                 },
                                 modifier = Modifier
                                     .height(48.dp)
@@ -416,7 +376,6 @@ fun LoginScreen(
                     }
                 }
             }
-
         }
     }
 }
@@ -428,8 +387,7 @@ fun LoginScreenPreview() {
     LoginScreen(
         navController = NavController(LocalContext.current),
         uiState = LoginScreenUiState(),
-        loginUser = { _, _ -> },
-        onShowSnackBar = { _, _, _ -> false },
-        resetPassword = { _ -> }
+        onEvent = {},
+        onShowSnackBar = { _, _, _ -> false }
     )
 }

@@ -73,9 +73,19 @@ fun RegisterScreen(
     }
 
     var userEmail by remember { mutableStateOf("") }
+    var isEmailEmpty by rememberSaveable { mutableStateOf(false) }
+
     var userPassword by remember { mutableStateOf("") }
+    var showPassword by rememberSaveable { mutableStateOf(false) }
+    var isPasswordEmpty by rememberSaveable { mutableStateOf(false) }
+
     var userConfirmPassword by remember { mutableStateOf("") }
+    var showConfirmPassword by rememberSaveable { mutableStateOf(false) }
+
+    var isPasswordEqualToConfirmPassword by remember { mutableStateOf(true) }
+
     var userName by remember { mutableStateOf("") }
+    var isUserNameEmpty by rememberSaveable { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -90,14 +100,14 @@ fun RegisterScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.size(20.dp))
+            Spacer(modifier = Modifier.size(15.dp))
             Text(
                 text = "Join",
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                 fontWeight = FontWeight.W600
             )
-            Spacer(modifier = Modifier.size(18.dp))
+            Spacer(modifier = Modifier.size(12.dp))
             Text(
                 text = "Create your Account",
                 color = MaterialTheme.colorScheme.onBackground,
@@ -105,7 +115,7 @@ fun RegisterScreen(
                 fontWeight = FontWeight.W700
             )
 
-            Spacer(modifier = Modifier.size(20.dp))
+            Spacer(modifier = Modifier.size(15.dp))
 
             Text(
                 text = "Full Name",
@@ -119,7 +129,10 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.size(8.dp))
             OutlinedTextField(
                 value = userName,
-                onValueChange = { userName = it },
+                onValueChange = {
+                    userName = it
+                    isUserNameEmpty = false
+                },
                 singleLine = true,
                 textStyle = TextStyle(
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize
@@ -144,7 +157,21 @@ fun RegisterScreen(
                     .padding(horizontal = 28.dp)
             )
 
-            Spacer(modifier = Modifier.size(15.dp))
+            Box(
+                modifier = Modifier
+                    .widthIn(500.dp)
+                    .padding(horizontal = 30.dp)
+                    .height(21.dp)
+            ) {
+                if (isUserNameEmpty) {
+                    Text(
+                        text = "Name cannot be empty",
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
 
             Text(
                 text = "Email",
@@ -158,7 +185,10 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.size(8.dp))
             OutlinedTextField(
                 value = userEmail,
-                onValueChange = { userEmail = it },
+                onValueChange = {
+                    userEmail = it
+                    isEmailEmpty = false
+                },
                 singleLine = true,
                 textStyle = TextStyle(
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize
@@ -183,7 +213,21 @@ fun RegisterScreen(
                     .padding(horizontal = 28.dp)
             )
 
-            Spacer(modifier = Modifier.size(15.dp))
+            Box(
+                modifier = Modifier
+                    .widthIn(500.dp)
+                    .padding(horizontal = 30.dp)
+                    .height(21.dp)
+            ) {
+                if (isEmailEmpty) {
+                    Text(
+                        text = "Email cannot be empty",
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
 
             Text(
                 text = "Password",
@@ -196,11 +240,12 @@ fun RegisterScreen(
             )
             Spacer(modifier = Modifier.size(8.dp))
 
-            var showPassword by rememberSaveable { mutableStateOf(false) }
-
             OutlinedTextField(
                 value = userPassword,
-                onValueChange = { userPassword = it },
+                onValueChange = {
+                    userPassword = it
+                    isPasswordEmpty = false
+                },
                 singleLine = true,
                 textStyle = TextStyle(
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize
@@ -233,7 +278,21 @@ fun RegisterScreen(
                     .padding(horizontal = 28.dp)
             )
 
-            Spacer(modifier = Modifier.size(15.dp))
+            Box(
+                modifier = Modifier
+                    .widthIn(500.dp)
+                    .padding(horizontal = 30.dp)
+                    .height(21.dp)
+            ) {
+                if (isPasswordEmpty) {
+                    Text(
+                        text = "Password cannot be empty",
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
 
             Text(
                 text = "Confirm password",
@@ -246,11 +305,12 @@ fun RegisterScreen(
             )
             Spacer(modifier = Modifier.size(8.dp))
 
-            var showConfirmPassword by rememberSaveable { mutableStateOf(false) }
-
             OutlinedTextField(
                 value = userConfirmPassword,
-                onValueChange = { userConfirmPassword = it },
+                onValueChange = {
+                    userConfirmPassword = it
+                    isPasswordEqualToConfirmPassword = true
+                },
                 singleLine = true,
                 textStyle = TextStyle(
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize
@@ -258,12 +318,12 @@ fun RegisterScreen(
                 trailingIcon = {
                     IconButton(onClick = { showConfirmPassword = !showConfirmPassword }) {
                         Icon(
-                            painter = painterResource(id = if (showPassword) AppIcons.VisibilityOn else AppIcons.VisibilityOff),
+                            painter = painterResource(id = if (showConfirmPassword) AppIcons.VisibilityOn else AppIcons.VisibilityOff),
                             contentDescription = "toggle_show_password"
                         )
                     }
                 },
-                visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (showConfirmPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color.Transparent,
                     unfocusedBorderColor = Color.Transparent,
@@ -284,7 +344,23 @@ fun RegisterScreen(
                     .padding(horizontal = 28.dp)
             )
 
-            Spacer(modifier = Modifier.size(20.dp))
+            Box(
+                modifier = Modifier
+                    .widthIn(500.dp)
+                    .padding(horizontal = 30.dp)
+                    .height(21.dp)
+            ) {
+                if (!isPasswordEqualToConfirmPassword) {
+                    Text(
+                        text = "Passwords do not match",
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.size(10.dp))
 
             Box(
                 modifier = Modifier
@@ -293,7 +369,34 @@ fun RegisterScreen(
             ) {
                 Button(
                     onClick = {
-                        registerUser(userName, userEmail, userPassword)
+                        when {
+                            userEmail.isEmpty() && userPassword.isEmpty() && userName.isEmpty() && userConfirmPassword.isEmpty() -> {
+                                isEmailEmpty = true
+                                isPasswordEmpty = true
+                                isUserNameEmpty = true
+                            }
+
+                            userName.isEmpty() -> {
+                                isUserNameEmpty = true
+                            }
+
+                            userEmail.isEmpty() -> {
+                                isEmailEmpty = true
+                            }
+
+                            userPassword.isEmpty() -> {
+                                isPasswordEmpty = true
+                            }
+
+                            userPassword != userConfirmPassword -> {
+                                isPasswordEqualToConfirmPassword = false
+                            }
+
+                            else -> {
+                                registerUser(userName, userEmail, userPassword)
+                            }
+                        }
+
                     },
                     modifier = Modifier
                         .widthIn(150.dp)
@@ -313,7 +416,7 @@ fun RegisterScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.size(50.dp))
+            Spacer(modifier = Modifier.size(30.dp))
 
             Row {
                 Text(

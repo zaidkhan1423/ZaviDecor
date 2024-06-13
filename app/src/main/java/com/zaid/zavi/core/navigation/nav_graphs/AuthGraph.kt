@@ -42,9 +42,8 @@ fun NavGraphBuilder.authGraph(
             LoginScreen(
                 navController = navController,
                 uiState = loginScreenUiState,
-                loginUser = loginViewModel::loginUser,
-                onShowSnackBar = onShowSnackBar,
-                resetPassword = loginViewModel::resetPassword
+                onEvent = loginViewModel::onEvent,
+                onShowSnackBar = onShowSnackBar
             )
         }
 
