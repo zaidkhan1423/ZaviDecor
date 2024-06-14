@@ -19,7 +19,85 @@ class RegisterScreenViewModel @Inject constructor(
     private val _registerScreenUiState = MutableStateFlow(RegisterScreenUiState())
     val registerScreenUiState = _registerScreenUiState.asStateFlow()
 
-    fun signupUser(name: String, email: String, password: String) {
+    fun onEvent(event: RegisterScreenUiEvent) {
+        when (event) {
+            is RegisterScreenUiEvent.OnConfirmPasswordChange -> _registerScreenUiState.update {
+                it.copy(
+                    confirmPassword = event.confirmPassword
+                )
+            }
+
+            is RegisterScreenUiEvent.OnEmailChange -> _registerScreenUiState.update {
+                it.copy(
+                    email = event.email
+                )
+            }
+
+            RegisterScreenUiEvent.OnMessageDisplayed -> _registerScreenUiState.update {
+                it.copy(
+                    snackBarMessage = null
+                )
+            }
+
+            is RegisterScreenUiEvent.OnNameChange -> _registerScreenUiState.update {
+                it.copy(
+                    name = event.name
+                )
+            }
+
+            is RegisterScreenUiEvent.OnPasswordChange -> _registerScreenUiState.update {
+                it.copy(
+                    password = event.password
+                )
+            }
+
+            RegisterScreenUiEvent.OnRegisterUserClick -> signupUser()
+
+            is RegisterScreenUiEvent.EmailEmptyStateChanged -> _registerScreenUiState.update {
+                it.copy(
+                    isEmailBlank = event.isEmailEmpty
+                )
+            }
+
+            is RegisterScreenUiEvent.NameEmptyStateChanged -> _registerScreenUiState.update {
+                it.copy(
+                    isNameBlank = event.isNameEmpty
+                )
+            }
+
+            is RegisterScreenUiEvent.PasswordEmptyStateChanged -> _registerScreenUiState.update {
+                it.copy(
+                    isPasswordBlank = event.isPasswordEmpty
+                )
+            }
+
+            is RegisterScreenUiEvent.PasswordMatchStateChanged -> _registerScreenUiState.update {
+                it.copy(
+                    isPasswordBlank = event.isPasswordMatch
+                )
+            }
+        }
+    }
+
+    private fun signupUser() {
+
+        val name = registerScreenUiState.value.name
+        val email = registerScreenUiState.value.email
+        val password = registerScreenUiState.value.password
+        val confirmPassword = registerScreenUiState.value.confirmPassword
+
+        _registerScreenUiState.update {
+            it.copy(
+                isNameBlank = name.isEmpty(),
+                isEmailBlank = email.isBlank(),
+                isPasswordBlank = password.isBlank(),
+                isPasswordMatch = password == confirmPassword
+            )
+        }
+
+        if (!registerScreenUiState.value.isPasswordMatch || registerScreenUiState.value.isNameBlank || registerScreenUiState.value.isEmailBlank || registerScreenUiState.value.isPasswordBlank) return
+
+
         _registerScreenUiState.update { uiState ->
             uiState.copy(
                 loading = true, snackBarMessage = null
@@ -34,7 +112,6 @@ class RegisterScreenViewModel @Inject constructor(
                         )
                     }
                 }
-
                 is Resource.Loading -> {
                     _registerScreenUiState.update { uiState ->
                         uiState.copy(

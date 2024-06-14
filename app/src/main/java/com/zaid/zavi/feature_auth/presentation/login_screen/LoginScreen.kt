@@ -2,6 +2,7 @@ package com.zaid.zavi.feature_auth.presentation.login_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -53,6 +55,7 @@ import androidx.navigation.NavController
 import com.zaid.zavi.core.navigation.NavGraphRoutes
 import com.zaid.zavi.core.navigation.Screen
 import com.zaid.zavi.core.utils.AppIcons
+import com.zaid.zavi.theme.ZaviDecorTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -224,7 +227,12 @@ fun LoginScreen(
                 Text(
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .clickable { onEvent(LoginUiEvent.OnResetPasswordDialogStateChanged(true)) },
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) {
+                            onEvent(LoginUiEvent.OnResetPasswordDialogStateChanged(true))
+                        },
                     text = "Forgot Password?",
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize
@@ -248,7 +256,11 @@ fun LoginScreen(
                         modifier = Modifier.size(35.dp)
                     )
                 } else {
-                    Text(text = "Log In", fontSize = MaterialTheme.typography.bodyLarge.fontSize)
+                    Text(
+                        text = "Log In",
+                        color = MaterialTheme.colorScheme.background,
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize
+                    )
                 }
             }
 
@@ -266,7 +278,10 @@ fun LoginScreen(
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                     fontWeight = FontWeight.W700,
-                    modifier = Modifier.clickable {
+                    modifier = Modifier.clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
                         navController.navigate(Screen.RegisterScreen.route)
                     }
                 )
@@ -280,7 +295,7 @@ fun LoginScreen(
                 }) {
                     Surface(
                         shape = RoundedCornerShape(16.dp),
-                        color = MaterialTheme.colorScheme.surface
+                        color = MaterialTheme.colorScheme.background
                     ) {
                         Column(
                             modifier = Modifier
@@ -308,7 +323,7 @@ fun LoginScreen(
                                 value = uiState.emailForResetPassword,
                                 onValueChange = {
                                     onEvent(LoginUiEvent.OnEmailForResetPasswordChange(it))
-                                    onEvent(LoginUiEvent.EmailForResetPasswordStateChange(false))
+                                    onEvent(LoginUiEvent.EmailForResetPasswordEmptyStateChange(false))
                                 },
                                 singleLine = true,
                                 textStyle = TextStyle(
@@ -368,7 +383,8 @@ fun LoginScreen(
                                 } else {
                                     Text(
                                         text = "Submit",
-                                        fontSize = MaterialTheme.typography.bodyLarge.fontSize
+                                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                                        color = MaterialTheme.colorScheme.background
                                     )
                                 }
                             }
@@ -384,10 +400,12 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(
-        navController = NavController(LocalContext.current),
-        uiState = LoginScreenUiState(),
-        onEvent = {},
-        onShowSnackBar = { _, _, _ -> false }
-    )
+    ZaviDecorTheme {
+        LoginScreen(
+            navController = NavController(LocalContext.current),
+            uiState = LoginScreenUiState(),
+            onEvent = {},
+            onShowSnackBar = { _, _, _ -> false }
+        )
+    }
 }

@@ -29,7 +29,7 @@ fun NavGraphBuilder.authGraph(
             RegisterScreen(
                 navController = navController,
                 uiState = registerScreenUiState,
-                registerUser = registerScreenViewModel::signupUser,
+                onEvent = registerScreenViewModel::onEvent,
                 onShowSnackBar = onShowSnackBar,
             )
         }

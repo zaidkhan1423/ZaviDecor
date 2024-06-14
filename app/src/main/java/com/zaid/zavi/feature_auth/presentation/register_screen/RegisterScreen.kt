@@ -2,6 +2,7 @@ package com.zaid.zavi.feature_auth.presentation.register_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +32,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,8 +47,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.zaid.zavi.core.navigation.Screen
 import com.zaid.zavi.core.utils.AppIcons
+import com.zaid.zavi.theme.ZaviDecorTheme
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,13 +56,14 @@ import kotlinx.coroutines.delay
 fun RegisterScreen(
     navController: NavController,
     uiState: RegisterScreenUiState,
-    registerUser: (String, String, String) -> Unit,
+    onEvent: (RegisterScreenUiEvent) -> Unit,
     onShowSnackBar: suspend (message: String, actionLabel: String?, duration: SnackbarDuration) -> Boolean
 ) {
 
     LaunchedEffect(uiState) {
         if (uiState.snackBarMessage != null) {
             onShowSnackBar(uiState.snackBarMessage, null, SnackbarDuration.Short)
+            onEvent(RegisterScreenUiEvent.OnMessageDisplayed)
         }
     }
     LaunchedEffect(uiState) {
@@ -72,20 +73,8 @@ fun RegisterScreen(
         }
     }
 
-    var userEmail by remember { mutableStateOf("") }
-    var isEmailEmpty by rememberSaveable { mutableStateOf(false) }
-
-    var userPassword by remember { mutableStateOf("") }
-    var showPassword by rememberSaveable { mutableStateOf(false) }
-    var isPasswordEmpty by rememberSaveable { mutableStateOf(false) }
-
-    var userConfirmPassword by remember { mutableStateOf("") }
-    var showConfirmPassword by rememberSaveable { mutableStateOf(false) }
-
-    var isPasswordEqualToConfirmPassword by remember { mutableStateOf(true) }
-
-    var userName by remember { mutableStateOf("") }
-    var isUserNameEmpty by rememberSaveable { mutableStateOf(false) }
+    var showPassword by remember { mutableStateOf(false) }
+    var showConfirmPassword by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -128,10 +117,10 @@ fun RegisterScreen(
             )
             Spacer(modifier = Modifier.size(8.dp))
             OutlinedTextField(
-                value = userName,
+                value = uiState.name,
                 onValueChange = {
-                    userName = it
-                    isUserNameEmpty = false
+                    onEvent(RegisterScreenUiEvent.OnNameChange(it))
+                    onEvent(RegisterScreenUiEvent.NameEmptyStateChanged(false))
                 },
                 singleLine = true,
                 textStyle = TextStyle(
@@ -163,7 +152,7 @@ fun RegisterScreen(
                     .padding(horizontal = 30.dp)
                     .height(21.dp)
             ) {
-                if (isUserNameEmpty) {
+                if (uiState.isNameBlank) {
                     Text(
                         text = "Name cannot be empty",
                         color = MaterialTheme.colorScheme.error,
@@ -184,10 +173,10 @@ fun RegisterScreen(
             )
             Spacer(modifier = Modifier.size(8.dp))
             OutlinedTextField(
-                value = userEmail,
+                value = uiState.email,
                 onValueChange = {
-                    userEmail = it
-                    isEmailEmpty = false
+                    onEvent(RegisterScreenUiEvent.OnEmailChange(it))
+                    onEvent(RegisterScreenUiEvent.EmailEmptyStateChanged(false))
                 },
                 singleLine = true,
                 textStyle = TextStyle(
@@ -219,7 +208,7 @@ fun RegisterScreen(
                     .padding(horizontal = 30.dp)
                     .height(21.dp)
             ) {
-                if (isEmailEmpty) {
+                if (uiState.isEmailBlank) {
                     Text(
                         text = "Email cannot be empty",
                         color = MaterialTheme.colorScheme.error,
@@ -241,10 +230,10 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.size(8.dp))
 
             OutlinedTextField(
-                value = userPassword,
+                value = uiState.password,
                 onValueChange = {
-                    userPassword = it
-                    isPasswordEmpty = false
+                    onEvent(RegisterScreenUiEvent.OnPasswordChange(it))
+                    onEvent(RegisterScreenUiEvent.PasswordEmptyStateChanged(false))
                 },
                 singleLine = true,
                 textStyle = TextStyle(
@@ -284,7 +273,7 @@ fun RegisterScreen(
                     .padding(horizontal = 30.dp)
                     .height(21.dp)
             ) {
-                if (isPasswordEmpty) {
+                if (uiState.isPasswordBlank) {
                     Text(
                         text = "Password cannot be empty",
                         color = MaterialTheme.colorScheme.error,
@@ -306,10 +295,10 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.size(8.dp))
 
             OutlinedTextField(
-                value = userConfirmPassword,
+                value = uiState.confirmPassword,
                 onValueChange = {
-                    userConfirmPassword = it
-                    isPasswordEqualToConfirmPassword = true
+                    onEvent(RegisterScreenUiEvent.OnConfirmPasswordChange(it))
+                    onEvent(RegisterScreenUiEvent.PasswordMatchStateChanged(uiState.password == uiState.confirmPassword))
                 },
                 singleLine = true,
                 textStyle = TextStyle(
@@ -350,7 +339,7 @@ fun RegisterScreen(
                     .padding(horizontal = 30.dp)
                     .height(21.dp)
             ) {
-                if (!isPasswordEqualToConfirmPassword) {
+                if (!uiState.isPasswordMatch) {
                     Text(
                         text = "Passwords do not match",
                         color = MaterialTheme.colorScheme.error,
@@ -369,34 +358,7 @@ fun RegisterScreen(
             ) {
                 Button(
                     onClick = {
-                        when {
-                            userEmail.isEmpty() && userPassword.isEmpty() && userName.isEmpty() && userConfirmPassword.isEmpty() -> {
-                                isEmailEmpty = true
-                                isPasswordEmpty = true
-                                isUserNameEmpty = true
-                            }
-
-                            userName.isEmpty() -> {
-                                isUserNameEmpty = true
-                            }
-
-                            userEmail.isEmpty() -> {
-                                isEmailEmpty = true
-                            }
-
-                            userPassword.isEmpty() -> {
-                                isPasswordEmpty = true
-                            }
-
-                            userPassword != userConfirmPassword -> {
-                                isPasswordEqualToConfirmPassword = false
-                            }
-
-                            else -> {
-                                registerUser(userName, userEmail, userPassword)
-                            }
-                        }
-
+                        onEvent(RegisterScreenUiEvent.OnRegisterUserClick)
                     },
                     modifier = Modifier
                         .widthIn(150.dp)
@@ -410,7 +372,7 @@ fun RegisterScreen(
                         )
                     } else {
                         Text(
-                            text = "Sign Up", fontSize = MaterialTheme.typography.bodyLarge.fontSize
+                            text = "Sign Up", fontSize = MaterialTheme.typography.bodyLarge.fontSize, color = MaterialTheme.colorScheme.background
                         )
                     }
                 }
@@ -429,8 +391,11 @@ fun RegisterScreen(
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = MaterialTheme.typography.titleMedium.fontSize,
                     fontWeight = FontWeight.W700,
-                    modifier = Modifier.clickable {
-                        navController.navigate(Screen.LoginScreen.route)
+                    modifier = Modifier.clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
+                        navController.popBackStack()
                     })
             }
             Spacer(modifier = Modifier.size(30.dp))
@@ -441,10 +406,12 @@ fun RegisterScreen(
 @Preview(showBackground = true)
 @Composable
 fun RegisterScreenPreview() {
-    RegisterScreen(
-        navController = NavController(LocalContext.current),
-        uiState = RegisterScreenUiState(),
-        registerUser = { _, _, _ -> },
-        onShowSnackBar = { _, _, _ -> false }
-    )
+    ZaviDecorTheme {
+        RegisterScreen(
+            navController = NavController(LocalContext.current),
+            uiState = RegisterScreenUiState(),
+            onEvent = {},
+            onShowSnackBar = { _, _, _ -> false }
+        )
+    }
 }

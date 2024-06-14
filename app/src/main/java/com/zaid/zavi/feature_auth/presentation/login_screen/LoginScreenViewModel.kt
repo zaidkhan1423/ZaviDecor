@@ -53,7 +53,7 @@ class LoginScreenViewModel @Inject constructor(
                 )
             }
 
-            is LoginUiEvent.EmailForResetPasswordStateChange -> _loginScreenUiState.update {
+            is LoginUiEvent.EmailForResetPasswordEmptyStateChange -> _loginScreenUiState.update {
                 it.copy(
                     isEmailForResetPasswordEmpty = event.isEmailForResetPasswordEmpty
                 )
