@@ -3,13 +3,17 @@ package com.zaid.zavi.feature_auth.data.repository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
+import com.zaid.zavi.core.utils.Constants.USER_COLLECTION
 import com.zaid.zavi.core.utils.Resource
 import com.zaid.zavi.core.utils.firebase_utils.await
+import com.zaid.zavi.feature_auth.data.request.User
 import com.zaid.zavi.feature_auth.domain.repository.AuthRepository
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
 ) : AuthRepository {
     override val currentUser: FirebaseUser?
         get() = firebaseAuth.currentUser
@@ -42,6 +46,16 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun resetPassword(email: String): Resource<Void> {
         return try {
             val result = firebaseAuth.sendPasswordResetEmail(email).await()
+            Resource.Success(result)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
+
+    override suspend fun saveUserInfo(userUid: String, user: User): Resource<Void> {
+        return try {
+            val result = firestore.collection(USER_COLLECTION).document(userUid).set(user).await()
             Resource.Success(result)
         } catch (e: Exception) {
             e.printStackTrace()

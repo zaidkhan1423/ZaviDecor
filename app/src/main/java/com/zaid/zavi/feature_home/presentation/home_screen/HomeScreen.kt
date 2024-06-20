@@ -131,8 +131,7 @@ fun HomeScreen() {
                         color = MaterialTheme.colorScheme.primary.takeIf { isSelected }
                             ?: MaterialTheme.colorScheme.onBackground
                     )
-                    Box(
-                        modifier = modifier.value
+                    Box( modifier = modifier.value
                             .height(2.dp)
                             .width(30.dp)
                     )
