@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.zaid.zavi.core.navigation.NavGraphRoutes
 import com.zaid.zavi.core.navigation.Screen
-import com.zaid.zavi.ui.home_screen.HomeScreen
+import com.zaid.zavi.feature_home.presentation.home_screen.HomeScreen
 import com.zaid.zavi.ui.my_cart_screen.MyCartScreen
 import com.zaid.zavi.ui.profile_screen.ProfileScreen
 import com.zaid.zavi.ui.search_screen.SearchScreen

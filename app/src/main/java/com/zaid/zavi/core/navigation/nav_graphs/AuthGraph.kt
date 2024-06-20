@@ -46,6 +46,5 @@ fun NavGraphBuilder.authGraph(
                 onShowSnackBar = onShowSnackBar
             )
         }
-
     }
 }

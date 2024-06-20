@@ -1,4 +1,4 @@
-package com.zaid.zavi.ui.home_screen
+package com.zaid.zavi.feature_home.presentation.home_screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,6 +34,7 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -74,7 +75,7 @@ fun HomeScreen() {
         )
 
         val listOfCategories = listOf("All", "Kitchen", "Room", "Washroom")
-        var selectedIndex by remember { mutableStateOf(0) }
+        var selectedIndex by remember { mutableIntStateOf(0) }
         var selectedCategory by remember { mutableStateOf("All") }
 
         Spacer(modifier = Modifier.size(10.dp))
@@ -136,7 +137,6 @@ fun HomeScreen() {
                             .width(30.dp)
                     )
                 }
-
                 Spacer(modifier = Modifier.size(20.dp))
             }
         }
@@ -334,10 +334,7 @@ fun HomeScreen() {
                 }
             }
         }
-
-
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

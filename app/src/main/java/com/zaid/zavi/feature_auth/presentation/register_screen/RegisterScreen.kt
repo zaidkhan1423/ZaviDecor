@@ -258,9 +258,7 @@ fun RegisterScreen(
                 },
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 placeholder = {
-                    Text(
-                        fontSize = MaterialTheme.typography.bodyLarge.fontSize, text = "Password"
-                    )
+                    Text(fontSize = MaterialTheme.typography.bodyLarge.fontSize, text = "Password")
                 },
                 modifier = Modifier
                     .widthIn(500.dp)
@@ -372,7 +370,9 @@ fun RegisterScreen(
                         )
                     } else {
                         Text(
-                            text = "Sign Up", fontSize = MaterialTheme.typography.bodyLarge.fontSize, color = MaterialTheme.colorScheme.background
+                            text = "Sign Up",
+                            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                            color = MaterialTheme.colorScheme.background
                         )
                     }
                 }
@@ -394,9 +394,7 @@ fun RegisterScreen(
                     modifier = Modifier.clickable(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
-                    ) {
-                        navController.popBackStack()
-                    })
+                    ) { navController.popBackStack() })
             }
             Spacer(modifier = Modifier.size(30.dp))
         }
