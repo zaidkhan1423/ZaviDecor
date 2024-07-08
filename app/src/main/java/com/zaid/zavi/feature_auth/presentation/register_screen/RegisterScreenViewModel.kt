@@ -3,7 +3,7 @@ package com.zaid.zavi.feature_auth.presentation.register_screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zaid.zavi.core.utils.Resource
-import com.zaid.zavi.feature_auth.data.request.User
+import com.zaid.zavi.feature_auth.data.model.request.User
 import com.zaid.zavi.feature_auth.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

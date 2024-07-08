@@ -2,7 +2,7 @@ package com.zaid.zavi.feature_auth.domain.repository
 
 import com.google.firebase.auth.FirebaseUser
 import com.zaid.zavi.core.utils.Resource
-import com.zaid.zavi.feature_auth.data.request.User
+import com.zaid.zavi.feature_auth.data.model.request.User
 
 interface AuthRepository {
     val currentUser: FirebaseUser?

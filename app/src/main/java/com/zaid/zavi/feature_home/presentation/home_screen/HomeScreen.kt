@@ -3,7 +3,6 @@ package com.zaid.zavi.feature_home.presentation.home_screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,18 +12,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -55,11 +53,11 @@ import com.zaid.zavi.core.utils.AppIcons
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(uiState: HomeScreenUiState) {
 
     Column(
         modifier = Modifier
-            .verticalScroll(rememberScrollState())
+//            .verticalScroll(rememberScrollState())
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
@@ -78,24 +76,15 @@ fun HomeScreen() {
         var selectedIndex by remember { mutableIntStateOf(0) }
         var selectedCategory by remember { mutableStateOf("All") }
 
-        Spacer(modifier = Modifier.size(10.dp))
-
-        Text(
-            text = "Categories",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.W600,
-            modifier = Modifier.padding(start = 25.dp)
-        )
-
         Spacer(modifier = Modifier.size(5.dp))
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .horizontalScroll(rememberScrollState())
+//                .horizontalScroll(rememberScrollState())
         ) {
-            Spacer(modifier = Modifier.size(25.dp))
+            Spacer(modifier = Modifier.size(15.dp))
 
             listOfCategories.forEachIndexed { index, value ->
                 val isSelected = index == selectedIndex
@@ -131,142 +120,142 @@ fun HomeScreen() {
                         color = MaterialTheme.colorScheme.primary.takeIf { isSelected }
                             ?: MaterialTheme.colorScheme.onBackground
                     )
-                    Box( modifier = modifier.value
+                    Box(
+                        modifier = modifier.value
                             .height(2.dp)
                             .width(30.dp)
                     )
                 }
-                Spacer(modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.size(15.dp))
             }
-        }
-
-        LazyRow(
-            contentPadding = PaddingValues(top = 10.dp, start = 20.dp),
-            modifier = Modifier
-                .wrapContentHeight()
-                .padding(vertical = 20.dp)
-        ) {
-
-            items(count = 5) { index ->
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .width(170.dp)
-                ) {
-
-                    Column(
-                        verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .wrapContentHeight()
-                            .background(
-                                color = MaterialTheme.colorScheme.outline.copy(0.05f),
-                                shape = RoundedCornerShape(10.dp)
-                            )
-                            .clip(RoundedCornerShape(10.dp))
-                    ) {
-                        AsyncImage(
-                            modifier = Modifier
-                                .height(127.dp)
-                                .width(188.dp),
-                            model = "https://rukminim2.flixcart.com/image/416/416/l3ahpjk0/soap-case/4/t/d/abs-plastic-four-soap-case-green-zzak001-zavi-original-imagegaveb7khmpa.jpeg?q=70&crop=false",
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop
-                        )
-
-                        Spacer(modifier = Modifier.width(12.dp))
-
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 10.dp, end = 8.dp)
-                        ) {
-
-                            Spacer(modifier = Modifier.size(10.dp))
-
-                            Text(
-                                text = "Zavi ABS Plastic four Soap case (Green)",
-                                fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 2
-                            )
-
-                            Spacer(modifier = Modifier.size(10.dp))
-
-                            Row(verticalAlignment = Alignment.Bottom) {
-                                Text(
-                                    text = "₹ ",
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                Text(
-                                    text = "169",
-                                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                            Spacer(modifier = Modifier.size(10.dp))
-                        }
-                    }
-                    Image(
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(alignment = Alignment.BottomEnd)
-                            .padding(bottom = 12.dp, end = 5.dp),
-                        painter = painterResource(id = AppIcons.UnselectedLikeIcon),
-                        contentDescription = ""
-                    )
-                }
-                Spacer(modifier = Modifier.size(12.dp))
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 25.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Popular",
-                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                fontWeight = FontWeight.W600
-            )
-            Text(
-                text = "See All",
-                fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                color = Color.Gray
-            )
         }
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(max = 1000.dp)
-                .padding(horizontal = 14.dp),
-            contentPadding = PaddingValues(vertical = 15.dp)
+                .fillMaxSize(),
+            contentPadding = PaddingValues(vertical = 15.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(-20.dp)
         ) {
-            items(count = 6) {
-                Box(
-                    modifier = Modifier.padding(5.dp)
-                        .fillMaxSize()
-                        .width(170.dp)
+            item(span = { GridItemSpan(2) }) {
+                LazyRow(
+                    contentPadding = PaddingValues(start = 15.dp),
+                    modifier = Modifier
+                        .wrapContentHeight()
                 ) {
+                    items(count = uiState.products.size) { index ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .width(170.dp)
+                        ) {
+                            Column(
+                                verticalArrangement = Arrangement.Top,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .wrapContentHeight()
+                                    .background(
+                                        color = MaterialTheme.colorScheme.outline.copy(0.05f),
+                                        shape = RoundedCornerShape(10.dp)
+                                    )
+                                    .clip(RoundedCornerShape(10.dp))
+                            ) {
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .height(127.dp)
+                                        .width(188.dp),
+                                    model = uiState.products[index].images[0],
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop
+                                )
 
+                                Spacer(modifier = Modifier.width(12.dp))
+
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 10.dp, end = 8.dp)
+                                ) {
+
+                                    Spacer(modifier = Modifier.size(10.dp))
+
+                                    Text(
+                                        text = uiState.products[index].name,
+                                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        overflow = TextOverflow.Ellipsis,
+                                        maxLines = 2
+                                    )
+
+                                    Spacer(modifier = Modifier.size(10.dp))
+
+                                    Row(verticalAlignment = Alignment.Bottom) {
+                                        Text(
+                                            text = "₹ ",
+                                            fontSize = 18.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                        Text(
+                                            text = uiState.products[index].price.toString(),
+                                            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.size(10.dp))
+                                }
+                            }
+                            Image(
+                                modifier = Modifier
+                                    .size(35.dp)
+                                    .align(alignment = Alignment.BottomEnd)
+                                    .padding(bottom = 12.dp, end = 5.dp),
+                                painter = painterResource(id = AppIcons.UnselectedLikeIcon),
+                                contentDescription = ""
+                            )
+                        }
+                        Spacer(modifier = Modifier.size(12.dp))
+                    }
+                }
+            }
+
+            item(span = { GridItemSpan(2) }) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Popular",
+                        fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                        fontWeight = FontWeight.W600
+                    )
+                    Text(
+                        text = "See All",
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                        color = Color.Gray
+                    )
+                }
+            }
+
+            items(count = uiState.products.size) {
+
+                Box(
+                    modifier = Modifier.wrapContentSize().padding(horizontal = 15.dp)
+                ) {
                     Column(
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .wrapContentHeight()
+                            .widthIn(250.dp)
                             .background(
                                 color = MaterialTheme.colorScheme.outline.copy(0.05f),
                                 shape = RoundedCornerShape(10.dp)
@@ -276,8 +265,8 @@ fun HomeScreen() {
                         AsyncImage(
                             modifier = Modifier
                                 .height(127.dp)
-                                .width(188.dp),
-                            model = "https://rukminim2.flixcart.com/image/416/416/l3ahpjk0/soap-case/4/t/d/abs-plastic-four-soap-case-green-zzak001-zavi-original-imagegaveb7khmpa.jpeg?q=70&crop=false",
+                                .widthIn(250.dp),
+                            model = uiState.products[it].images[0],
                             contentDescription = null,
                             contentScale = ContentScale.Crop
                         )
@@ -293,7 +282,7 @@ fun HomeScreen() {
                             Spacer(modifier = Modifier.size(10.dp))
 
                             Text(
-                                text = "Zavi ABS Plastic four Soap case (Green)",
+                                text = uiState.products[it].name,
                                 fontSize = MaterialTheme.typography.titleMedium.fontSize,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onBackground,
@@ -312,7 +301,7 @@ fun HomeScreen() {
                                     overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
-                                    text = "169",
+                                    text = uiState.products[it].price.toString(),
                                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                                     fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onBackground,
@@ -335,6 +324,7 @@ fun HomeScreen() {
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -385,5 +375,5 @@ fun AppTopBar(
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
+    HomeScreen(uiState = HomeScreenUiState())
 }
