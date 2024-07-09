@@ -54,7 +54,7 @@ class HomeScreenViewModel @Inject constructor(
                     val products = result.result.toObjects(Products::class.java)
                     _homeScreenUiState.update { uiState ->
                         uiState.copy(
-                            loginLoading = false, snackBarMessage = null, products = products
+                            loginLoading = false, snackBarMessage = "Data Fetch", products = products
                         )
                     }
                 }

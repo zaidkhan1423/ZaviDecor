@@ -1,5 +1,6 @@
 package com.zaid.zavi.core.navigation.nav_graphs
 
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -16,7 +17,8 @@ import com.zaid.zavi.ui.profile_screen.ProfileScreen
 import com.zaid.zavi.ui.search_screen.SearchScreen
 
 fun NavGraphBuilder.topLevelGraph(
-    navController: NavController
+    navController: NavController,
+    onShowSnackBar: suspend (message: String, actionLabel: String?, duration: SnackbarDuration) -> Boolean
 ) {
     navigation(startDestination = Screen.HomeScreen.route, route = NavGraphRoutes.TOP_LEVEL) {
 
@@ -25,7 +27,7 @@ fun NavGraphBuilder.topLevelGraph(
             val homeViewModel: HomeScreenViewModel = hiltViewModel()
             val homeScreenUiState by homeViewModel.homeScreenUiState.collectAsStateWithLifecycle()
 
-            HomeScreen(uiState = homeScreenUiState)
+            HomeScreen(uiState = homeScreenUiState, navController = navController, onShowSnackBar = onShowSnackBar)
         }
 
         composable(route = Screen.SearchScreen.route) {

@@ -23,6 +23,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ZaviDecorTheme {
+
                 // A surface container using the 'background' color from the theme
                 ZaviApp(networkMonitor = networkMonitor,firebaseAuth = firebaseAuth)
             }

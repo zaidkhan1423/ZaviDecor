@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -23,7 +23,7 @@ fun AppNavHost(
     onShowSnackBar: suspend (message: String, actionLabel: String?, duration: SnackbarDuration) -> Boolean,
 ) {
 
-    var showSplashScreen by remember { mutableStateOf(true) }
+    var showSplashScreen by rememberSaveable { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         delay(2000L)
@@ -38,10 +38,9 @@ fun AppNavHost(
             startDestination = if (isLoggedIn) NavGraphRoutes.TOP_LEVEL else NavGraphRoutes.AUTH
         ) {
             authGraph(navController = navHostController, onShowSnackBar = onShowSnackBar)
-            topLevelGraph(navController = navHostController)
+            topLevelGraph(navController = navHostController, onShowSnackBar = onShowSnackBar)
         }
     }
-
 }
 
 object NavGraphRoutes {
