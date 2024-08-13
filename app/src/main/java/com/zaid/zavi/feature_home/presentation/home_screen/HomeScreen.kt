@@ -27,6 +27,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
@@ -49,6 +50,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,6 +65,7 @@ import com.zaid.zavi.feature_home.presentation.component.shimmerEffect
 fun HomeScreen(
     uiState: HomeScreenUiState,
     navController: NavController,
+    onEvent: (HomeScreenUiEvent) -> Unit,
     onShowSnackBar: suspend (message: String, actionLabel: String?, duration: SnackbarDuration) -> Boolean
 ) {
 
@@ -97,7 +100,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalArrangement = Arrangement.spacedBy(-20.dp)
+            horizontalArrangement = Arrangement.spacedBy((-20).dp)
         ) {
             item(span = { GridItemSpan(2) }) {
                 Row(
@@ -134,6 +137,20 @@ fun HomeScreen(
                                     .clickable {
                                         selectedIndex = index
                                         selectedCategory = value
+                                        when(value){
+                                            "All" -> {
+                                                onEvent(HomeScreenUiEvent.OnAllProductsClick)
+                                            }
+                                            "Kitchen" -> {
+                                                onEvent(HomeScreenUiEvent.OnKitchenProductsClick)
+                                            }
+                                            "Room" -> {
+                                                onEvent(HomeScreenUiEvent.OnRoomProductsClick)
+                                            }
+                                            "Washroom" -> {
+                                                onEvent(HomeScreenUiEvent.OnWashroomProductsClick)
+                                            }
+                                        }
                                     }
                                     .padding(vertical = 7.dp, horizontal = 8.dp),
                                 text = value,
@@ -154,14 +171,13 @@ fun HomeScreen(
             }
 
             item(span = { GridItemSpan(2) }) {
-
-                if (uiState.loginLoading) {
+                if (uiState.productsLoading) {
                     LazyRow(
                         contentPadding = PaddingValues(start = 15.dp),
                         modifier = Modifier
                             .wrapContentHeight()
                     ) {
-                        items(count = 5) { index ->
+                        items(count = 4) { index ->
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -220,7 +236,7 @@ fun HomeScreen(
                                                     .clip(RoundedCornerShape(5.dp))
                                                     .shimmerEffect(),
                                                 text = "          ",
-                                                fontSize = 18.sp,
+                                                fontSize = MaterialTheme.typography.titleMedium.fontSize,
                                                 fontWeight = FontWeight.SemiBold,
                                                 color = MaterialTheme.colorScheme.primary,
                                                 overflow = TextOverflow.Ellipsis
@@ -295,16 +311,44 @@ fun HomeScreen(
                                         Spacer(modifier = Modifier.size(10.dp))
 
                                         Row(verticalAlignment = Alignment.Bottom) {
+
+                                            if (uiState.products[index].offerPercentage != 0f) {
+                                                Text(
+                                                    text = "₹ ",
+                                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                                    fontWeight = FontWeight.SemiBold,
+                                                    color = MaterialTheme.colorScheme.primary,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+
+                                                Text(
+                                                    text = uiState.products[index].price.toString(),
+                                                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                                                    fontWeight = FontWeight.SemiBold,
+                                                    style = LocalTextStyle.current.copy(textDecoration = TextDecoration.LineThrough),
+                                                    color = MaterialTheme.colorScheme.onBackground,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                                Spacer(modifier = Modifier.size(3.dp))
+                                            }
+
+                                            val originalPrice = uiState.products[index].price
+                                            val offerPercentage =
+                                                uiState.products[index].offerPercentage ?: 0f
+                                            val discountedPrice =
+                                                originalPrice * (1 - offerPercentage / 100)
+
                                             Text(
                                                 text = "₹ ",
-                                                fontSize = 18.sp,
+                                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                                 fontWeight = FontWeight.SemiBold,
                                                 color = MaterialTheme.colorScheme.primary,
                                                 overflow = TextOverflow.Ellipsis
                                             )
+
                                             Text(
-                                                text = uiState.products[index].price.toString(),
-                                                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                                text = "%.2f".format(discountedPrice),
+                                                fontSize = MaterialTheme.typography.titleMedium.fontSize,
                                                 fontWeight = FontWeight.SemiBold,
                                                 color = MaterialTheme.colorScheme.onBackground,
                                                 overflow = TextOverflow.Ellipsis
@@ -349,8 +393,8 @@ fun HomeScreen(
                     )
                 }
             }
-            if (uiState.loginLoading) {
-                items(count = 8) {
+            if (uiState.popularProductsLoading) {
+                items(count = 6) {
                     Box(
                         modifier = Modifier
                             .wrapContentSize()
@@ -427,7 +471,7 @@ fun HomeScreen(
                     }
                 }
             } else {
-                items(uiState.products.size) {
+                items(uiState.popularProducts.size) {
                     Box(
                         modifier = Modifier
                             .wrapContentSize()
@@ -449,7 +493,7 @@ fun HomeScreen(
                                 modifier = Modifier
                                     .height(127.dp)
                                     .widthIn(250.dp),
-                                model = uiState.products[it].images[0],
+                                model = uiState.popularProducts[it].images[0],
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop
                             )
@@ -465,7 +509,7 @@ fun HomeScreen(
                                 Spacer(modifier = Modifier.size(10.dp))
 
                                 Text(
-                                    text = uiState.products[it].name,
+                                    text = uiState.popularProducts[it].name,
                                     fontSize = MaterialTheme.typography.titleMedium.fontSize,
                                     fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onBackground,
@@ -476,21 +520,50 @@ fun HomeScreen(
                                 Spacer(modifier = Modifier.size(10.dp))
 
                                 Row(verticalAlignment = Alignment.Bottom) {
+                                    if (uiState.popularProducts[it].offerPercentage != 0f) {
+                                        Text(
+                                            text = "₹ ",
+                                            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+
+                                        Text(
+                                            text = uiState.popularProducts[it].price.toString(),
+                                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                                            fontWeight = FontWeight.SemiBold,
+                                            style = LocalTextStyle.current.copy(textDecoration = TextDecoration.LineThrough),
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+
+                                    val originalPrice = uiState.popularProducts[it].price
+                                    val offerPercentage =
+                                        uiState.popularProducts[it].offerPercentage ?: 0f
+                                    val discountedPrice =
+                                        originalPrice * (1 - offerPercentage / 100)
+
+                                    Spacer(modifier = Modifier.size(3.dp))
+
                                     Text(
                                         text = "₹ ",
-                                        fontSize = 18.sp,
+                                        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                         fontWeight = FontWeight.SemiBold,
                                         color = MaterialTheme.colorScheme.primary,
                                         overflow = TextOverflow.Ellipsis
                                     )
+
                                     Text(
-                                        text = uiState.products[it].price.toString(),
-                                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                        text = "%.2f".format(discountedPrice),
+                                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
                                         fontWeight = FontWeight.SemiBold,
                                         color = MaterialTheme.colorScheme.onBackground,
                                         overflow = TextOverflow.Ellipsis
                                     )
                                 }
+
                                 Spacer(modifier = Modifier.size(10.dp))
                             }
                         }
@@ -562,5 +635,7 @@ fun HomeScreenPreview() {
     HomeScreen(
         uiState = HomeScreenUiState(),
         navController = NavController(LocalContext.current),
-        onShowSnackBar = { _, _, _ -> false })
+        onShowSnackBar = { _, _, _ -> false },
+        onEvent = {}
+    )
 }

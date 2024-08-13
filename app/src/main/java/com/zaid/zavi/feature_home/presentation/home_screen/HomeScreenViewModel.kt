@@ -21,23 +21,39 @@ class HomeScreenViewModel @Inject constructor(
     val homeScreenUiState = _homeScreenUiState.asStateFlow()
 
     init {
-        getSpecialProducts()
+        getAllProducts()
+        getPopularProducts()
     }
 
-    private fun getSpecialProducts() {
+    fun onEvent(event: HomeScreenUiEvent) {
+        when (event) {
+            HomeScreenUiEvent.OnAllProductsClick -> getAllProducts()
+            HomeScreenUiEvent.OnMessageDisplayed -> _homeScreenUiState.update {
+                it.copy(
+                    snackBarMessage = null
+                )
+            }
+
+            HomeScreenUiEvent.OnKitchenProductsClick -> getKitchenProducts()
+            HomeScreenUiEvent.OnRoomProductsClick -> getRoomProducts()
+            HomeScreenUiEvent.OnWashroomProductsClick -> getWashroomProducts()
+        }
+    }
+
+    private fun getAllProducts() {
 
         _homeScreenUiState.update { uiState ->
             uiState.copy(
-                loginLoading = true, snackBarMessage = null
+                productsLoading = true, snackBarMessage = null
             )
         }
 
         viewModelScope.launch {
-            when (val result = homeRepository.getSpecialProducts()) {
+            when (val result = homeRepository.getAllProducts()) {
                 is Resource.Failure -> {
                     _homeScreenUiState.update { uiState ->
                         uiState.copy(
-                            loginLoading = false, snackBarMessage = result.exception.message
+                            productsLoading = false, snackBarMessage = result.exception.message
                         )
                     }
                 }
@@ -45,16 +61,135 @@ class HomeScreenViewModel @Inject constructor(
                 Resource.Loading -> {
                     _homeScreenUiState.update { uiState ->
                         uiState.copy(
-                            loginLoading = true, snackBarMessage = null
+                            productsLoading = true, snackBarMessage = null
                         )
                     }
                 }
 
                 is Resource.Success -> {
-                    val products = result.result.toObjects(Products::class.java)
+                    val specialProducts = result.result.toObjects(Products::class.java)
                     _homeScreenUiState.update { uiState ->
                         uiState.copy(
-                            loginLoading = false, snackBarMessage = "Data Fetch", products = products
+                            productsLoading = false,
+                            snackBarMessage = "Data Fetch",
+                            products = specialProducts
+                        )
+                    }
+                }
+            }
+        }
+    }
+    private fun getKitchenProducts() {
+
+        _homeScreenUiState.update { uiState ->
+            uiState.copy(
+                productsLoading = true, snackBarMessage = null
+            )
+        }
+
+        viewModelScope.launch {
+            when (val result = homeRepository.getKitchenProducts()) {
+                is Resource.Failure -> {
+                    _homeScreenUiState.update { uiState ->
+                        uiState.copy(
+                            productsLoading = false, snackBarMessage = result.exception.message
+                        )
+                    }
+                }
+
+                Resource.Loading -> {
+                    _homeScreenUiState.update { uiState ->
+                        uiState.copy(
+                            productsLoading = true, snackBarMessage = null
+                        )
+                    }
+                }
+
+                is Resource.Success -> {
+                    val kitchenProducts = result.result.toObjects(Products::class.java)
+                    _homeScreenUiState.update { uiState ->
+                        uiState.copy(
+                            productsLoading = false,
+                            snackBarMessage = "Data Fetch",
+                            products = kitchenProducts
+                        )
+                    }
+                }
+            }
+        }
+    }
+    private fun getRoomProducts() {
+
+        _homeScreenUiState.update { uiState ->
+            uiState.copy(
+                productsLoading = true, snackBarMessage = null
+            )
+        }
+
+        viewModelScope.launch {
+            when (val result = homeRepository.getRoomProducts()) {
+                is Resource.Failure -> {
+                    _homeScreenUiState.update { uiState ->
+                        uiState.copy(
+                            productsLoading = false, snackBarMessage = result.exception.message
+                        )
+                    }
+                }
+
+                Resource.Loading -> {
+                    _homeScreenUiState.update { uiState ->
+                        uiState.copy(
+                            productsLoading = true, snackBarMessage = null
+                        )
+                    }
+                }
+
+                is Resource.Success -> {
+                    val roomProducts = result.result.toObjects(Products::class.java)
+                    _homeScreenUiState.update { uiState ->
+                        uiState.copy(
+                            productsLoading = false,
+                            snackBarMessage = "Data Fetch",
+                            products = roomProducts
+                        )
+                    }
+                }
+            }
+        }
+    }
+    private fun getWashroomProducts() {
+
+        _homeScreenUiState.update { uiState ->
+            uiState.copy(
+                productsLoading = true, snackBarMessage = null
+            )
+        }
+
+        viewModelScope.launch {
+            when (val result = homeRepository.getWashroomProducts()) {
+                is Resource.Failure -> {
+                    _homeScreenUiState.update { uiState ->
+                        uiState.copy(
+                            productsLoading = false, snackBarMessage = result.exception.message
+                        )
+                    }
+                }
+
+                Resource.Loading -> {
+                    _homeScreenUiState.update { uiState ->
+                        uiState.copy(
+                            productsLoading = true, snackBarMessage = null
+                        )
+                    }
+                }
+
+                is Resource.Success -> {
+                    val washroomProducts = result.result.toObjects(Products::class.java)
+                    _homeScreenUiState.update { uiState ->
+                        uiState.copy(
+                            productsLoading = false,
+                            snackBarMessage = "Data Fetch",
+                            products = washroomProducts
                         )
                     }
                 }
@@ -62,5 +197,43 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    private fun getPopularProducts() {
 
+        _homeScreenUiState.update { uiState ->
+            uiState.copy(
+                popularProductsLoading = true, snackBarMessage = null
+            )
+        }
+
+        viewModelScope.launch {
+            when (val result = homeRepository.getPopularProducts()) {
+                is Resource.Failure -> {
+                    _homeScreenUiState.update { uiState ->
+                        uiState.copy(
+                            popularProductsLoading = false, snackBarMessage = result.exception.message
+                        )
+                    }
+                }
+
+                Resource.Loading -> {
+                    _homeScreenUiState.update { uiState ->
+                        uiState.copy(
+                            popularProductsLoading = true, snackBarMessage = null
+                        )
+                    }
+                }
+
+                is Resource.Success -> {
+                    val popularProducts = result.result.toObjects(Products::class.java)
+                    _homeScreenUiState.update { uiState ->
+                        uiState.copy(
+                            popularProductsLoading = false,
+                            snackBarMessage = "Data Fetch",
+                            popularProducts = popularProducts
+                        )
+                    }
+                }
+            }
+        }
+    }
 }

@@ -5,6 +5,10 @@ import com.zaid.zavi.core.utils.Resource
 
 interface HomeRepository {
 
-    suspend fun getSpecialProducts(): Resource<QuerySnapshot>
+    suspend fun getPopularProducts(): Resource<QuerySnapshot>
+    suspend fun getAllProducts(): Resource<QuerySnapshot>
+    suspend fun getKitchenProducts(): Resource<QuerySnapshot>
+    suspend fun getRoomProducts(): Resource<QuerySnapshot>
+    suspend fun getWashroomProducts(): Resource<QuerySnapshot>
 
 }

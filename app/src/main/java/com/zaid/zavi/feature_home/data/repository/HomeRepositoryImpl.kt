@@ -11,10 +11,58 @@ import javax.inject.Inject
 class HomeRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : HomeRepository {
-    override suspend fun getSpecialProducts(): Resource<QuerySnapshot> {
+    override suspend fun getAllProducts(): Resource<QuerySnapshot> {
         return try {
             val result =
-                firestore.collection(PRODUCTS).whereEqualTo("category", "Special Products").get()
+                firestore.collection(PRODUCTS).get()
+                    .await()
+            Resource.Success(result)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
+
+    override suspend fun getKitchenProducts(): Resource<QuerySnapshot> {
+        return try {
+            val result =
+                firestore.collection(PRODUCTS).whereEqualTo("category", "Kitchen").get()
+                    .await()
+            Resource.Success(result)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
+
+    override suspend fun getRoomProducts(): Resource<QuerySnapshot> {
+        return try {
+            val result =
+                firestore.collection(PRODUCTS).whereEqualTo("category", "Room").get()
+                    .await()
+            Resource.Success(result)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
+
+    override suspend fun getWashroomProducts(): Resource<QuerySnapshot> {
+        return try {
+            val result =
+                firestore.collection(PRODUCTS).whereEqualTo("category", "Washroom").get()
+                    .await()
+            Resource.Success(result)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
+
+    override suspend fun getPopularProducts(): Resource<QuerySnapshot> {
+        return try {
+            val result =
+                firestore.collection(PRODUCTS).whereEqualTo("category", "Popular").get()
                     .await()
             Resource.Success(result)
         } catch (e: Exception) {

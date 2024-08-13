@@ -27,7 +27,7 @@ fun NavGraphBuilder.topLevelGraph(
             val homeViewModel: HomeScreenViewModel = hiltViewModel()
             val homeScreenUiState by homeViewModel.homeScreenUiState.collectAsStateWithLifecycle()
 
-            HomeScreen(uiState = homeScreenUiState, navController = navController, onShowSnackBar = onShowSnackBar)
+            HomeScreen(uiState = homeScreenUiState, navController = navController, onShowSnackBar = onShowSnackBar, onEvent = homeViewModel::onEvent)
         }
 
         composable(route = Screen.SearchScreen.route) {
